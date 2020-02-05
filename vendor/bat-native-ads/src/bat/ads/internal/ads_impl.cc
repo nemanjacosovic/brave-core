@@ -14,7 +14,7 @@
 #include "bat/ads/ads_history.h"
 #include "bat/ads/confirmation_type.h"
 #include "bat/ads/ad_notification_info.h"
-
+#include "bat/ads/purchase_intent_signal_history.h"
 #include "bat/ads/internal/ads_impl.h"
 #include "bat/ads/internal/classification_helper.h"
 #include "bat/ads/internal/locale_helper.h"
@@ -91,6 +91,9 @@ AdsImpl::AdsImpl(AdsClient* ads_client) :
     ad_conversions_(std::make_unique<AdConversions>(
         this, ads_client, client_.get())),
     user_model_(nullptr),
+    purchase_intent_classifier_(std::make_unique<PurchaseIntentClassifier>(
+        kPurchaseIntentSignalLevel, kPurchaseIntentClassificationThreshold,
+        kPurchaseIntentSignalDecayTimeWindow)),
     is_initialized_(false),
     is_confirmations_ready_(false),
     ads_client_(ads_client) {
@@ -685,6 +688,8 @@ void AdsImpl::OnPageLoaded(
 
   CheckAdConversion(url);
 
+  ExtractPurchaseIntentSignal(url);
+
   if (helper::Uri::MatchesDomainOrHost(url,
       last_shown_ad_notification_info_.target_url)) {
     BLOG(INFO) << "Site visited " << url
@@ -729,6 +734,38 @@ void AdsImpl::OnPageLoaded(
 
   BLOG(INFO) << "Site visited " << url << ", previous tab url was "
       << previous_tab_url_;
+}
+
+void AdsImpl::ExtractPurchaseIntentSignal(const std::string& url) {
+  if (!ShouldClassifyPagesIfTargeted()) {
+    return;
+  }
+
+  if (!TestSearchState(url) &&
+      helper::Uri::MatchesDomainOrHost(url, previous_tab_url_)) {
+    return;
+  }
+
+  PurchaseIntentSignalInfo purchase_intent_signal =
+      purchase_intent_classifier_->ExtractIntentSignal(url);
+
+  if (purchase_intent_signal.segments.empty() &&
+      purchase_intent_signal.timestamp_in_seconds == 0) {
+    return;
+  }
+
+  GeneratePurchaseIntentSignalHistoryEntry(purchase_intent_signal);
+  BLOG(INFO) << "Intent signal extracted for " << url;
+}
+
+void AdsImpl::GeneratePurchaseIntentSignalHistoryEntry(
+    const PurchaseIntentSignalInfo& purchase_intent_signal) {
+  for (const auto& segment : purchase_intent_signal.segments) {
+    auto history = std::make_unique<PurchaseIntentSignalHistory>();
+    history->timestamp_in_seconds = purchase_intent_signal.timestamp_in_seconds;
+    history->weight = purchase_intent_signal.weight;
+    client_->AppendToPurchaseIntentSignalHistoryForSegment(segment, *history);
+  }
 }
 
 void AdsImpl::CheckAdConversion(
@@ -947,6 +984,20 @@ AdsImpl::GetPageScoreCache() const {
   return page_score_cache_;
 }
 
+std::vector<std::string> AdsImpl::GetWinningPurchaseIntentCategories() {
+  auto purchase_intent_signal_history =
+      client_->GetPurchaseIntentSignalHistory();
+  if (purchase_intent_signal_history.size() == 0) {
+    return {};
+  }
+
+  std::vector<std::string> winning_categories;
+  winning_categories = purchase_intent_classifier_->GetWinningCategories(
+      purchase_intent_signal_history, 3);
+
+  return winning_categories;
+}
+
 void AdsImpl::TestShoppingData(
     const std::string& url) {
   if (!IsInitialized()) {
@@ -1116,7 +1167,14 @@ void AdsImpl::ServeAdNotificationIfReady(
     }
   }
 
-  auto categories = GetWinningCategories();
+  std::vector<std::string> categories;
+  auto contextual_categories = GetWinningCategories();
+  categories.insert(categories.end(),
+      contextual_categories.begin(), contextual_categories.end());
+  auto purchase_intent_categories = GetWinningPurchaseIntentCategories();
+  categories.insert(categories.end(),
+      purchase_intent_categories.begin(), purchase_intent_categories.end());
+
   ServeAdNotificationFromCategories(categories);
 }
 
@@ -1160,6 +1218,9 @@ void AdsImpl::OnServeAdNotificationFromCategories(
     BLOG(INFO) << "  " << category;
   }
 
+  // TODO(Moritz Haller): Not serve from parent categories when targeting on
+  // intent: would pick any from e.g. "automotive purchase intent by make"
+  // achieveing the opposite of what an advertiser intends to do?
   if (ServeAdNotificationFromParentCategories(categories)) {
     return;
   }

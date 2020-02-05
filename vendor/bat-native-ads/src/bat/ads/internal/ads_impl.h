@@ -24,7 +24,7 @@
 #include "bat/ads/internal/ad_conversions.h"
 #include "bat/ads/internal/ad_notification_result_type.h"
 #include "bat/ads/internal/ad_notifications.h"
-
+#include "bat/ads/internal/purchase_intent/purchase_intent_classifier.h"
 #include "bat/usermodel/user_model.h"
 
 namespace ads {
@@ -37,6 +37,7 @@ class AdConversions;
 class FrequencyCapping;
 class ExclusionRule;
 class PermissionRule;
+class PurchaseIntentClassifier;
 
 class AdsImpl : public Ads {
  public:
@@ -151,6 +152,11 @@ class AdsImpl : public Ads {
       const std::string& url,
       const std::string& content) override;
 
+  void ExtractPurchaseIntentSignal(
+      const std::string& url);
+  void GeneratePurchaseIntentSignalHistoryEntry(
+      const PurchaseIntentSignalInfo& purchase_intent_signal);
+
   void MaybeClassifyPage(
       const std::string& url,
       const std::string& content);
@@ -160,6 +166,7 @@ class AdsImpl : public Ads {
       const std::string& content);
 
   std::vector<std::string> GetWinningCategories();
+  std::vector<std::string> GetWinningPurchaseIntentCategories();
   std::string GetWinningCategory(
       const std::vector<double>& page_score);
 
@@ -291,6 +298,7 @@ class AdsImpl : public Ads {
   std::unique_ptr<AdNotifications> ad_notifications_;
   std::unique_ptr<AdConversions> ad_conversions_;
   std::unique_ptr<usermodel::UserModel> user_model_;
+  std::unique_ptr<PurchaseIntentClassifier> purchase_intent_classifier_;
 
  private:
   bool is_initialized_;

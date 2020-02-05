@@ -10,6 +10,7 @@
 #include "url/gurl.h"
 #include "third_party/re2/src/re2/re2.h"
 #include "net/base/registry_controlled_domains/registry_controlled_domain.h"
+#include "net/base/url_util.h"
 
 namespace helper {
 
@@ -51,6 +52,19 @@ bool Uri::MatchesWildcard(
   RE2::GlobalReplace(&quoted_lowercase_pattern, "\\\\\\*", ".*");
 
   return RE2::FullMatch(lowercase_url, quoted_lowercase_pattern);
+}
+
+std::string Uri::GetValueForKeyInQuery(
+    const std::string& url,
+    const std::string& key) {
+  auto gurl = GURL(url);
+  std::string query_value;
+
+  if (!net::GetValueForKeyInQuery(gurl, key, &query_value)) {
+    return "";
+  }
+
+  return query_value;
 }
 
 bool Uri::MatchesDomainOrHost(
