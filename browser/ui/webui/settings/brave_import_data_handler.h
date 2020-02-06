@@ -7,7 +7,7 @@
 #define BRAVE_BROWSER_UI_WEBUI_SETTINGS_BRAVE_SETTINGS_IMPORT_DATA_HANDLER_H_
 
 #include "base/memory/weak_ptr.h"
-#include "chrome/browser/ui/webui/settings/settings_import_data_handler.h"
+#include "chrome/browser/ui/webui/settings/import_data_handler.h"
 #include "content/public/browser/web_contents_observer.h"
 
 namespace settings {
