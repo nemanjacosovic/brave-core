@@ -418,7 +418,7 @@ base::Value AdNotifications::GetAsList() {
     dictionary.SetKey(kNotificationTargetUrlKey,
         base::Value(ad_notification.target_url));
 
-    list.GetList().push_back(std::move(dictionary));
+    list.Insert(list.GetList().end(), std::move(dictionary));
   }
 
   return list;
