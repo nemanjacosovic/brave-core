@@ -1,0 +1,11 @@
+<script>
+  var result = false;
+  navigator.getUserAgent().then((response) => {
+    if (response.brand === "Brave") {
+      result = true;
+    }
+  });
+  function getBraveDetected() {
+    return result;
+  }
+</script>
