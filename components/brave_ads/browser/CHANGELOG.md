@@ -18,7 +18,7 @@ bool AdsService::IsNewlySupportedLocale()
 ---
 
 ---
-### New API (21st February 2020)
+### Refactored API (21st February 2020)
 ##### Related PR
 
 [https://github.com/brave/brave-core/pull/4685](https://github.com/brave/brave-core/pull/4685)
@@ -35,4 +35,46 @@ ConfirmAd to ConfirmAdNotification
 NotificationInfo to AdNotificationInfo
 OnNotificationEvent to OnAdNotificationEvent
 NotificationEventType to AdNotificationEventType
+BatAdsNotificationEventType to BatAdNotificationEventType
+
+---
+### New API (24th February 2020)
+##### Related PR
+
+[https://github.com/brave/brave-core/pull/4705](https://github.com/brave/brave-core/pull/4705)
+
+##### Description
+
+Added new public API calls for Publisher Ads
+
+##### Added
+
+void IsParticipatingSiteForPublisherAds(
+    const std::string& url,
+    OnIsParticipatingSiteForPublisherAdsCallback callback)
+
+void GetCreativePublisherAds(
+    const std::string& url,
+    const std::vector<std::string>& categories,
+    const std::vector<std::string>& sizes,
+    const OnGetCreativePublisherAdsCallback callback)
+
+bool ShouldShowPublisherAdsOnParticipatingSites() const
+
+void CanShowPublisherAds(
+    const std::string& url,
+    const OnCanShowPublisherAdsCallback callback)
+
+void GetPublisherAds(
+    const std::string& url,
+    const std::vector<std::string>& sizes,
+    GetPublisherAdsCallback callback)
+
+void OnPublisherAdEvent(
+    const PublisherAdInfo& info,
+    const PublisherAdEventType event_type)
+
+##### Renamed
+
+ConfirmAdNotification to ConfirmAd
 ---

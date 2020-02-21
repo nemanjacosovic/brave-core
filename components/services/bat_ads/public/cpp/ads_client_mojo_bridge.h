@@ -32,6 +32,10 @@ class AdsClientMojoBridge
       bool* out_is_enabled) override;
   void IsEnabled(
       IsEnabledCallback callback) override;
+  bool ShouldShowPublisherAdsOnParticipatingSites(
+      bool* out_should_show) override;
+  void ShouldShowPublisherAdsOnParticipatingSites(
+      ShouldShowPublisherAdsOnParticipatingSitesCallback callback) override;
   bool ShouldAllowAdConversionTracking(
       bool* out_should_allow) override;
   void ShouldAllowAdConversionTracking(
@@ -120,8 +124,9 @@ class AdsClientMojoBridge
       const std::string& uuid) override;
   void SetCatalogIssuers(
       const std::string& issuers_info) override;
-  void ConfirmAdNotification(
-      const std::string& json) override;
+  void ConfirmAd(
+      const std::string& json,
+      const std::string& confirmation_type) override;
   void ConfirmAction(
       const std::string& creative_instance_id,
       const std::string& creative_set_id,
@@ -132,6 +137,15 @@ class AdsClientMojoBridge
   void GetCreativeAdNotifications(
       const std::vector<std::string>& categories,
       GetCreativeAdNotificationsCallback callback) override;
+  void GetCreativePublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& categories,
+      const std::vector<std::string>& sizes,
+      GetCreativePublisherAdsCallback callback) override;
+  void IsParticipatingSiteForPublisherAds(
+      const std::string& url,
+      IsParticipatingSiteForPublisherAdsCallback callback) override;
+
   void GetAdConversions(
       const std::string& url,
       GetAdConversionsCallback callback) override;
@@ -193,6 +207,17 @@ class AdsClientMojoBridge
       const ads::Result result,
       const std::vector<std::string>& categories,
       const ads::CreativeAdNotificationList& ads);
+  static void OnGetCreativePublisherAds(
+      CallbackHolder<GetCreativePublisherAdsCallback>* holder,
+      const ads::Result result,
+      const std::string& url,
+      const std::vector<std::string>& categories,
+      const std::vector<std::string>& sizes,
+      const ads::CreativePublisherAdList& ads);
+  static void OnIsParticipatingSiteForPublisherAds(
+      CallbackHolder<IsParticipatingSiteForPublisherAdsCallback>* holder,
+      const std::string& url,
+      const bool is_participating);
   static void OnGetAdConversions(
       CallbackHolder<GetAdConversionsCallback>* holder,
       const ads::Result result,

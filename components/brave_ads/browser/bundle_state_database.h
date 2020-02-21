@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "bat/ads/creative_ad_notification_info.h"
+#include "bat/ads/creative_publisher_ad_info.h"
 #include "bat/ads/ad_conversion_info.h"
 #include "bat/ads/bundle_state.h"
 #include "base/compiler_specific.h"
@@ -45,6 +46,15 @@ class BundleStateDatabase {
   bool GetCreativeAdNotifications(
       const std::vector<std::string>& categories,
       ads::CreativeAdNotificationList* ads);
+  bool GetCreativePublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& categories,
+      const std::vector<std::string>& sizes,
+      ads::CreativePublisherAdList* ads);
+  bool IsParticipatingSiteForPublisherAds(
+      const std::string& url,
+      bool* is_participating);
+
   bool GetAdConversions(
       const std::string& url,
       ads::AdConversionList* ad_conversions);
@@ -65,28 +75,52 @@ class BundleStateDatabase {
   void OnMemoryPressure(
       base::MemoryPressureListener::MemoryPressureLevel memory_pressure_level);
 
-  bool CreateCategoryTable();
-  bool TruncateCategoryTable();
+  bool CreateCategoriesTable();
+  bool TruncateCategoriesTable();
   bool InsertOrUpdateCategory(
       const std::string& category);
 
-  bool CreateCreativeAdNotificationInfoTable();
-  bool TruncateCreativeAdNotificationInfoTable();
-  bool InsertOrUpdateCreativeAdNotificationInfo(
+  bool CreateCreativeAdNotificationsTable();
+  bool TruncateCreativeAdNotificationsTable();
+  bool InsertOrUpdateCreativeAdNotification(
       const ads::CreativeAdNotificationInfo& info);
 
-  bool CreateCreativeAdNotificationInfoCategoryTable();
-  bool TruncateCreativeAdNotificationInfoCategoryTable();
-  bool InsertOrUpdateCreativeAdNotificationInfoCategory(
+  bool CreateCreativeAdNotificationCategoriesTable();
+  bool TruncateCreativeAdNotificationCategoriesTable();
+  bool InsertOrUpdateCreativeAdNotificationCategory(
       const ads::CreativeAdNotificationInfo& info,
       const std::string& category);
 
-  bool CreateCreativeAdNotificationInfoCategoryNameIndex();
+  bool CreateCreativeAdNotificationCategoriesCategoryIndex();
+
+  bool CreateCreativePublisherAdsTable();
+  bool TruncateCreativePublisherAdsTable();
+  bool InsertOrUpdateCreativePublisherAd(
+      const ads::CreativePublisherAdInfo& info);
+
+  bool CreateCreativePublisherAdsCategoriesTable();
+  bool TruncateCreativePublisherAdsCategoriesTable();
+  bool InsertOrUpdateCreativePublisherAdCategory(
+      const ads::CreativePublisherAdInfo& info,
+      const std::string& category);
+
+  bool CreateCreativePublisherAdsCategoriesCategoryIndex();
+
+  bool CreateCreativePublisherAdsChannelsTable();
+  bool TruncateCreativePublisherAdsChannelsTable();
+  bool InsertOrUpdateCreativePublisherAdChannel(
+      const ads::CreativePublisherAdInfo& info);
 
   bool CreateAdConversionsTable();
   bool TruncateAdConversionsTable();
   bool InsertOrUpdateAdConversion(
       const ads::AdConversionInfo& info);
+
+  std::string GetPublisherAdsChannel(
+      const std::string& url);
+
+  std::string CreateBindingParameterPlaceholders(
+      const size_t count);
 
   sql::Database& GetDB();
   sql::MetaTable& GetMetaTable();
@@ -95,6 +129,7 @@ class BundleStateDatabase {
   bool MigrateV1toV2();
   bool MigrateV2toV3();
   bool MigrateV3toV4();
+  bool MigrateV4toV5();
 
   sql::Database db_;
   sql::MetaTable meta_table_;

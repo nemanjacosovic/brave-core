@@ -22,14 +22,18 @@ struct AdContent;
 struct AdHistory;
 struct CreativeAdNotificationInfo;
 struct AdConversionInfo;
+struct CreativePublisherAdInfo;
 struct AdPreferences;
 struct AdsHistory;
+struct PublisherAds;
+struct PublisherAdInfo;
 struct BundleState;
 struct CategoryContent;
 struct ClientInfo;
 struct ClientState;
 struct IssuersInfo;
 struct AdNotificationInfo;
+struct AdInfo;
 
 using JsonWriter = rapidjson::Writer<rapidjson::StringBuffer>;
 
@@ -37,14 +41,18 @@ void SaveToJson(JsonWriter* writer, const AdContent& content);
 void SaveToJson(JsonWriter* writer, const AdHistory& history);
 void SaveToJson(JsonWriter* writer, const CreativeAdNotificationInfo& info);
 void SaveToJson(JsonWriter* writer, const AdConversionInfo& info);
+void SaveToJson(JsonWriter* writer, const CreativePublisherAdInfo& info);
 void SaveToJson(JsonWriter* writer, const AdPreferences& prefs);
 void SaveToJson(JsonWriter* writer, const AdsHistory& history);
+void SaveToJson(JsonWriter* writer, const PublisherAds& ads);
+void SaveToJson(JsonWriter* writer, const PublisherAdInfo& ads);
 void SaveToJson(JsonWriter* writer, const BundleState& state);
 void SaveToJson(JsonWriter* writer, const CategoryContent& content);
 void SaveToJson(JsonWriter* writer, const ClientInfo& info);
 void SaveToJson(JsonWriter* writer, const ClientState& state);
 void SaveToJson(JsonWriter* writer, const IssuersInfo& info);
 void SaveToJson(JsonWriter* writer, const AdNotificationInfo& info);
+void SaveToJson(JsonWriter* writer, const AdInfo& info);
 
 template <typename T>
 void SaveToJson(const T& t, std::string* json) {

@@ -5,9 +5,7 @@
 
 #include "bat/ads/ad_notification_info.h"
 #include "bat/ads/confirmation_type.h"
-
 #include "bat/ads/internal/json_helper.h"
-
 #include "base/logging.h"
 
 namespace ads {
@@ -71,11 +69,6 @@ Result AdNotificationInfo::FromJson(
     target_url = document["url"].GetString();
   }
 
-  if (document.HasMember("confirmation_type")) {
-    confirmation_type =
-        ConfirmationType(document["confirmation_type"].GetString());
-  }
-
   return SUCCESS;
 }
 
@@ -107,10 +100,6 @@ void SaveToJson(
 
   writer->String("url");
   writer->String(info.target_url.c_str());
-
-  writer->String("confirmation_type");
-  auto confirmation_type = std::string(info.confirmation_type);
-  writer->String(confirmation_type.c_str());
 
   writer->EndObject();
 }

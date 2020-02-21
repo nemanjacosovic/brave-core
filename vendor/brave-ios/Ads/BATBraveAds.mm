@@ -30,6 +30,7 @@ static const NSInteger kDefaultNumberOfAdsPerDay = 20;
 static const NSInteger kDefaultNumberOfAdsPerHour = 2;
 
 static NSString * const kAdsEnabledPrefKey = @"BATAdsEnabled";
+static NSString * const kShouldShowPublisherAdsOnParticipatingSitesPrefKey = @"BATkShouldShowPublisherAdsOnParticipatingSites";
 static NSString * const kShouldAllowAdConversionTrackingPrefKey = @"BATShouldAllowAdConversionTracking";
 static NSString * const kNumberOfAdsPerDayKey = @"BATNumberOfAdsPerDay";
 static NSString * const kNumberOfAdsPerHourKey = @"BATNumberOfAdsPerHour";
@@ -172,6 +173,17 @@ BATClassAdsBridge(BOOL, isTesting, setTesting, _is_testing)
   } else {
     [self shutdown];
   }
+}
+
+- (BOOL)shouldShowPublisherAdsOnParticipatingSites
+{
+  return [(NSNumber *)self.prefs[kShouldShowPublisherAdsOnParticipatingSitesPrefKey] boolValue];
+}
+
+- (void)setShowPublisherAdsOnParticipatingSites:(BOOL)shouldShowPublisherAdsOnParticipatingSites
+{
+  self.prefs[kShouldShowPublisherAdsOnParticipatingSitesPrefKey] = @(shouldShowPublisherAdsOnParticipatingSites);
+  [self savePrefs];
 }
 
 - (BOOL)shouldAllowAdConversionTracking
@@ -350,6 +362,13 @@ BATClassAdsBridge(BOOL, isTesting, setTesting, _is_testing)
                              static_cast<ads::AdNotificationEventType>(eventType));
 }
 
+- (void)reportPublisherAdEvent:(NSString *)notificationId eventType:(BATPublisherAdEventType)eventType
+{
+  if (![self isAdsServiceRunning]) { return; }
+  ads->OnPublisherAdEvent(notificationId.UTF8String,
+                          static_cast<ads::PublisherAdEventType>(eventType));
+}
+
 - (void)toggleThumbsUpForAd:(NSString *)creativeInstanceId creativeSetID:(NSString *)creativeSetID
 {
   if (![self isAdsServiceRunning]) { return; }
@@ -366,9 +385,9 @@ BATClassAdsBridge(BOOL, isTesting, setTesting, _is_testing)
                          ads::AdContent::LikeAction::kThumbsDown);
 }
 
-- (void)confirmAdNotification:(std::unique_ptr<ads::AdNotificationInfo>)info
+- (void)confirmAd:(const ads::AdInfo &)info confirmationType:(const ads::ConfirmationType)confirmationType
 {
-  [self.ledger confirmAdNotification:[NSString stringWithUTF8String:info->ToJson().c_str()]];
+  [self.ledger confirmAd:[NSString stringWithUTF8String:info.ToJson().c_str()] confirmationType:confirmationType];
 }
 
 - (void)confirmAction:(const std::string &)creative_instance_id creativeSetId:(const std::string &)creative_set_id confirmationType:(const ads::ConfirmationType &)type
@@ -393,6 +412,16 @@ BATClassAdsBridge(BOOL, isTesting, setTesting, _is_testing)
   }
 
   callback(ads::Result::SUCCESS, categories, found_ads);
+}
+
+- (void)getCreativePublisherAds:(const std::string &)url categories:(const std::vector<std::string> &)categories sizes:(const std::vector<std::string> &)sizes callback:(ads::OnGetCreativePublisherAdsCallback)callback
+{
+  // TODO(brave): To be implemented
+}
+
+- (void)isParticipatingSiteForPublisherAds:(const std::string &)url callback:(ads::OnIsParticipatingSiteForPublisherAdsCallback)callback
+{
+  // TODO(brave): To be implemented
 }
 
 - (void)getAdConversions:(const std::string &)url callback:(ads::OnGetAdConversionsCallback)callback
@@ -440,6 +469,11 @@ BATClassAdsBridge(BOOL, isTesting, setTesting, _is_testing)
 - (bool)isAdsEnabled
 {
   return self.enabled;
+}
+
+- (bool)shouldShowPublisherAdsOnParticipatingSites
+{
+  return self.shouldShowPublisherAdsOnParticipatingSites;
 }
 
 - (bool)isForeground

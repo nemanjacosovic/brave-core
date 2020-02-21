@@ -16,6 +16,7 @@
 #include "bat/ads/ads.h"
 #include "bat/ads/ads_history.h"
 #include "bat/ads/creative_ad_notification_info.h"
+#include "bat/ads/creative_publisher_ad_info.h"
 #include "bat/ads/mojom.h"
 #include "bat/ads/ad_notification_info.h"
 #include "bat/ads/internal/ads_serve.h"
@@ -40,11 +41,14 @@ class PermissionRule;
 
 class AdsImpl : public Ads {
  public:
-  explicit AdsImpl(AdsClient* ads_client);
+  explicit AdsImpl(
+      AdsClient* ads_client);
   ~AdsImpl() override;
 
   AdsClient* get_ads_client() const;
   Client* get_client() const;
+
+  AdNotifications* get_ad_notifications() const;
 
   InitializeCallback initialize_callback_;
   void Initialize(
@@ -96,6 +100,10 @@ class AdsImpl : public Ads {
       const std::string& uuid,
       const AdNotificationEventType event_type) override;
 
+  void OnPublisherAdEvent(
+      const PublisherAdInfo& info,
+      const PublisherAdEventType event_type) override;
+
   bool ShouldNotDisturb() const;
 
   int32_t active_tab_id_;
@@ -120,6 +128,15 @@ class AdsImpl : public Ads {
       const AdsHistory::SortType sort_type,
       const uint64_t from_timestamp,
       const uint64_t to_timestamp) override;
+
+  void GetPublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& sizes,
+      GetPublisherAdsCallback callback) override;
+
+  void CanShowPublisherAds(
+      const std::string& url,
+      CanShowPublisherAdsCallback callback) override;
 
   AdContent::LikeAction ToggleAdThumbUp(
       const std::string& creative_instance_id,
@@ -250,31 +267,29 @@ class AdsImpl : public Ads {
 
   void BundleUpdated();
 
-  AdNotificationInfo last_shown_ad_notification_info_;
-  CreativeAdNotificationInfo last_shown_creative_ad_notification_info_;
-  uint32_t sustained_ad_notification_interaction_timer_id_;
-  std::string last_sustained_ad_notification_domain_;
-  void StartSustainingAdNotificationInteraction(
-      const uint64_t start_timer_in);
-  void SustainAdNotificationInteractionIfNeeded();
-  void StopSustainingAdNotificationInteraction();
-  bool IsSustainingAdNotificationInteraction() const;
-  bool IsStillViewingAdNotification() const;
-  void ConfirmAdNotification(
-      const AdNotificationInfo& info,
-      const ConfirmationType& confirmation_type);
+  const AdNotificationInfo& get_last_shown_ad_notification() const;
+  void set_last_shown_ad_notification(
+      const AdNotificationInfo& info);
+
+  const PublisherAdInfo& get_last_shown_publisher_ad() const;
+  void set_last_shown_publisher_ad(
+      const PublisherAdInfo& info);
+
+  void ConfirmAd(
+      const AdInfo& info,
+      const ConfirmationType confirmation_type);
 
   void ConfirmAction(
       const std::string& creative_instance_id,
       const std::string& creative_set_id,
-      const ConfirmationType& confirmation_type);
+      const ConfirmationType confirmation_type);
 
   void OnTimer(
       const uint32_t timer_id) override;
 
   uint64_t next_easter_egg_timestamp_in_seconds_;
 
-  void AppendAdNotificationToAdsHistory(
+  void AppendAdNotificationToHistory(
       const AdNotificationInfo& info,
       const ConfirmationType& confirmation_type);
 
@@ -288,7 +303,6 @@ class AdsImpl : public Ads {
   std::unique_ptr<Bundle> bundle_;
   std::unique_ptr<AdsServe> ads_serve_;
   std::unique_ptr<FrequencyCapping> frequency_capping_;
-  std::unique_ptr<AdNotifications> ad_notifications_;
   std::unique_ptr<AdConversions> ad_conversions_;
   std::unique_ptr<usermodel::UserModel> user_model_;
 
@@ -296,6 +310,52 @@ class AdsImpl : public Ads {
   bool is_initialized_;
 
   bool is_confirmations_ready_;
+
+  AdNotificationInfo last_shown_ad_notification_;
+  CreativeAdNotificationInfo last_shown_creative_ad_notification_;
+  uint32_t sustained_ad_notification_interaction_timer_id_;
+  std::string last_sustained_ad_notification_url_;
+  void StartSustainingAdNotificationInteraction(
+      const uint64_t start_timer_in);
+  void SustainAdNotificationInteractionIfNeeded();
+  void StopSustainingAdNotificationInteraction();
+  bool IsSustainingAdNotificationInteraction() const;
+  bool IsStillViewingAdNotification() const;
+
+  PublisherAdInfo last_shown_publisher_ad_;
+  uint32_t sustained_publisher_ad_interaction_timer_id_;
+  std::string last_sustained_publisher_ad_url_;
+  void StartSustainingPublisherAdInteraction(
+      const uint64_t start_timer_in);
+  void SustainPublisherAdInteractionIfNeeded();
+  void SustainPublisherAdInteraction();
+  void StopSustainingPublisherAdInteraction();
+  bool IsSustainingPublisherAdInteraction() const;
+  bool IsStillViewingPublisherAd() const;
+
+  void OnGetCreativePublisherAds(
+      GetPublisherAdsCallback callback,
+      const Result result,
+      const std::string& url,
+      const std::vector<std::string>& categories,
+      const std::vector<std::string>& sizes,
+      const CreativePublisherAdList& creative_publisher_ads);
+
+  void OnIsParticipatingSiteForPublisherAds(
+      CanShowPublisherAdsCallback callback,
+      const std::string& url,
+      const bool is_participating);
+
+  CreativePublisherAdList GetEligibleCreativePublisherAds(
+      const CreativePublisherAdList& ads);
+  CreativePublisherAdList GetUnseenCreativePublisherAdsAndRoundRobinIfNeeded(
+      const CreativePublisherAdList& ads) const;
+  CreativePublisherAdList GetUnseenCreativePublisherAds(
+      const CreativePublisherAdList& ads) const;
+  CreativePublisherAdList GetCreativePublisherAdsForUnseenAdvertisers(
+      const CreativePublisherAdList& ads) const;
+
+  std::unique_ptr<AdNotifications> ad_notifications_;
 
   AdsClient* ads_client_;  // NOT OWNED
 

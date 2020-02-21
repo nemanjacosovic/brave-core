@@ -24,6 +24,7 @@
 #include "brave/components/brave_ads/browser/ads_service.h"
 #include "brave/components/brave_ads/browser/background_helper.h"
 #include "brave/components/brave_ads/browser/notification_helper.h"
+#include "brave/components/brave_ads/browser/publisher_ads.h"
 #include "brave/components/services/bat_ads/public/interfaces/bat_ads.mojom.h"
 #include "brave/components/brave_rewards/browser/rewards_notification_service_observer.h"
 #include "chrome/browser/notifications/notification_handler.h"
@@ -72,6 +73,9 @@ class AdsServiceImpl : public AdsService,
   void SetEnabled(
       const bool is_enabled) override;
 
+  void SetShowPublisherAdsOnParticipatingSites(
+      const bool should_show) override;
+
   void SetAllowAdConversionTracking(
       const bool should_allow) override;
 
@@ -100,10 +104,23 @@ class AdsServiceImpl : public AdsService,
   void OnTabClosed(
       const SessionID& tab_id) override;
 
+  void OnPublisherAdEvent(
+      const PublisherAdInfo& info,
+      const PublisherAdEventType event_type) override;
+
   void GetAdsHistory(
       const uint64_t from_timestamp,
       const uint64_t to_timestamp,
       OnGetAdsHistoryCallback callback) override;
+
+  void GetPublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& sizes,
+      OnGetPublisherAdsCallback callback) override;
+
+  void CanShowPublisherAds(
+      const std::string& url,
+      OnCanShowPublisherAdsCallback callback) override;
 
   void ToggleAdThumbUp(
       const std::string& creative_instance_id,
@@ -136,6 +153,8 @@ class AdsServiceImpl : public AdsService,
 
   // AdsClient implementation
   bool IsEnabled() const override;
+
+  bool ShouldShowPublisherAdsOnParticipatingSites() const override;
 
   bool ShouldAllowAdConversionTracking() const override;
 
@@ -225,6 +244,18 @@ class AdsServiceImpl : public AdsService,
       const std::vector<std::string>& categories,
       const ads::CreativeAdNotificationList& ads);
 
+  void OnGetCreativePublisherAds(
+      const ads::OnGetCreativePublisherAdsCallback& callback,
+      const std::string& url,
+      const std::vector<std::string>& categories,
+      const std::vector<std::string>& sizes,
+      const ads::CreativePublisherAdList& ads);
+
+  void OnIsParticipatingSiteForPublisherAds(
+      const ads::OnIsParticipatingSiteForPublisherAdsCallback& callback,
+      const std::string& url,
+      const bool is_participating);
+
   void OnGetAdConversions(
       const ads::OnGetAdConversionsCallback& callback,
       const std::string& url,
@@ -233,6 +264,17 @@ class AdsServiceImpl : public AdsService,
   void OnGetAdsHistory(
       OnGetAdsHistoryCallback callback,
       const std::string& json);
+
+  void OnGetPublisherAds(
+      OnGetPublisherAdsCallback callback,
+      const std::string& url,
+      const std::vector<std::string>& sizes,
+      const std::string& json);
+
+  void OnCanShowPublisherAds(
+      OnCanShowPublisherAdsCallback callback,
+      const std::string& url,
+      const bool can_show);
 
   void OnRemoveAllHistory(
       const int32_t result);
@@ -387,12 +429,14 @@ class AdsServiceImpl : public AdsService,
   void SetCatalogIssuers(
       std::unique_ptr<ads::IssuersInfo> info) override;
 
-  void ConfirmAdNotification(
-      std::unique_ptr<ads::AdNotificationInfo> info) override;
+  void ConfirmAd(
+      const ads::AdInfo& info,
+      const ads::ConfirmationType confirmation_type) override;
+
   void ConfirmAction(
       const std::string& creative_instance_id,
       const std::string& creative_set_id,
-      const ads::ConfirmationType& confirmation_type) override;
+      const ads::ConfirmationType confirmation_type) override;
 
   uint32_t SetTimer(
       const uint64_t time_offset) override;
@@ -433,6 +477,16 @@ class AdsServiceImpl : public AdsService,
   void GetCreativeAdNotifications(
       const std::vector<std::string>& categories,
       ads::OnGetCreativeAdNotificationsCallback callback) override;
+
+  void GetCreativePublisherAds(
+      const std::string& url,
+      const std::vector<std::string>& categories,
+      const std::vector<std::string>& sizes,
+      ads::OnGetCreativePublisherAdsCallback callback) override;
+
+  void IsParticipatingSiteForPublisherAds(
+      const std::string& url,
+      ads::OnIsParticipatingSiteForPublisherAdsCallback callback) override;
 
   void GetAdConversions(
       const std::string& url,

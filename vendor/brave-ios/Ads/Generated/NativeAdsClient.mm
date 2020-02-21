@@ -19,6 +19,10 @@ bool NativeAdsClient::IsEnabled() const {
   return [bridge_ isAdsEnabled];
 }
 
+bool NativeAdsClient::ShouldShowPublisherAdsOnParticipatingSites() const {
+  return [bridge_ shouldShowPublisherAdsOnParticipatingSites];
+}
+
 bool NativeAdsClient::ShouldAllowAdConversionTracking() const {
   return [bridge_ shouldAllowAdConversionTracking];
 }
@@ -79,12 +83,12 @@ void NativeAdsClient::SetCatalogIssuers(std::unique_ptr<ads::IssuersInfo> info) 
   [bridge_ setCatalogIssuers:std::move(info)];
 }
 
-void NativeAdsClient::ConfirmAdNotification(std::unique_ptr<ads::AdNotificationInfo> info) {
-  [bridge_ confirmAdNotification:std::move(info)];
+void NativeAdsClient::ConfirmAd(const ads::AdInfo & info, const ads::ConfirmationType confirmation_type) {
+  [bridge_ confirmAd:info confirmationType:confirmation_type];
 }
 
-void NativeAdsClient::ConfirmAction(const std::string & uuid, const std::string & creative_set_id, const ads::ConfirmationType & type) {
-  [bridge_ confirmAction:uuid creativeSetId:creative_set_id confirmationType:type];
+void NativeAdsClient::ConfirmAction(const std::string & uuid, const std::string & creative_set_id, const ads::ConfirmationType & confirmation_type) {
+  [bridge_ confirmAction:uuid creativeSetId:creative_set_id confirmationType:confirmation_type];
 }
 
 uint32_t NativeAdsClient::SetTimer(const uint64_t time_offset) {
@@ -125,6 +129,14 @@ void NativeAdsClient::SaveBundleState(std::unique_ptr<ads::BundleState> state, a
 
 void NativeAdsClient::GetCreativeAdNotifications(const std::vector<std::string> & categories, ads::OnGetCreativeAdNotificationsCallback callback) {
   [bridge_ getCreativeAdNotifications:categories callback:callback];
+}
+
+void NativeAdsClient::GetCreativePublisherAds(const std::string & url, const std::vector<std::string> & categories, const std::vector<std::string> & sizes, ads::OnGetCreativePublisherAdsCallback callback) {
+  [bridge_ getCreativePublisherAds:url categories:categories callback:callback];
+}
+
+void NativeAdsClient::IsParticipatingSiteForPublisherAds(const std::string & url, ads::OnIsParticipatingSiteForPublisherAdsCallback callback) {
+  [bridge_ isParticipatingSiteForPublisherAds:url callback:callback];
 }
 
 void NativeAdsClient::GetAdConversions(const std::string & url, ads::OnGetAdConversionsCallback callback) {
