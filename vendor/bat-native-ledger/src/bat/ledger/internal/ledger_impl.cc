@@ -1683,4 +1683,10 @@ void LedgerImpl::UpdateContributionInfoContributedAmount(
       callback);
 }
 
+void LedgerImpl::TransferTokens(
+    const std::string& wallet_type,
+    ledger::ResultCallback callback) {
+  bat_promotion_->TransferTokens(wallet_type, callback);
+}
+
 }  // namespace bat_ledger

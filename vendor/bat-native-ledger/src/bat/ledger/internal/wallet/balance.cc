@@ -132,6 +132,7 @@ void Balance::OnGetUnBlindedTokens(
   }
   info_ptr->total += total;
   info_ptr->wallets.insert(std::make_pair(ledger::kWalletUnBlinded, total));
+
   ExternalWallets(std::move(info_ptr), callback);
 }
 
@@ -176,6 +177,11 @@ void Balance::OnUpholdFetchBalance(ledger::Balance info,
   if (result == ledger::Result::LEDGER_ERROR) {
     callback(ledger::Result::LEDGER_ERROR, std::move(info_ptr));
     return;
+  }
+
+  auto it = info.wallets.find(ledger::kWalletUnBlinded);
+  if (it != info.wallets.end() && it->second > 0) {
+    ledger_->TransferTokens(ledger::kWalletUphold, [](const ledger::Result){});
   }
 
   info_ptr->wallets.insert(std::make_pair(ledger::kWalletUphold, balance));

@@ -639,6 +639,10 @@ class LedgerImpl : public ledger::Ledger,
       const std::string& publisher_key,
       ledger::ResultCallback callback);
 
+  void TransferTokens(
+      const std::string& wallet_type,
+      ledger::ResultCallback callback);
+
  private:
   void InitializeConfirmations(
     ledger::InitializeCallback callback);
