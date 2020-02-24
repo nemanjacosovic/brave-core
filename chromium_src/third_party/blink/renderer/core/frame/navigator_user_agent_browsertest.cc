@@ -12,6 +12,8 @@
 #include "chrome/test/base/ui_test_utils.h"
 #include "content/public/test/browser_test_utils.h"
 
+namespace {
+
 const char kDetectBraveTest[] = "/detect_brave.html";
 
 class NavigatorGetBraveDetectedTest : public InProcessBrowserTest {
@@ -60,4 +62,6 @@ IN_PROC_BROWSER_TEST_F(NavigatorGetBraveDetectedTest, OtherFieldsSet) {
       browser()->tab_strip_model()->GetActiveWebContents();
   EXPECT_EQ(false, EvalJs(
       contents, "otherFieldsSet()"));
+}
+
 }
