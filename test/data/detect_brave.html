@@ -1,11 +1,21 @@
 <script>
-  var result = false;
+  var brave_detected = false;
+  var other_fields_set = false;
   navigator.getUserAgent().then((response) => {
     if (response.brand === "Brave") {
-      result = true;
+      brave_detected = true;
     }
+    other_fields_set = (
+      response.architecture !== "" ||
+      response.model !== "" ||
+      response.platform !== "" ||
+      response.version !== ""
+    );
   });
   function getBraveDetected() {
-    return result;
+    return brave_detected;
+  }
+  function otherFieldsSet() {
+    return other_fields_set;
   }
 </script>
