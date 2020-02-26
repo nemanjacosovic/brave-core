@@ -19,6 +19,7 @@
 #include "content/public/common/web_preferences.h"
 #include "gpu/config/gpu_finch_features.h"
 #include "services/network/public/cpp/features.h"
+#include "third_party/blink/public/common/features.h"
 
 using BraveMainDelegateBrowserTest = InProcessBrowserTest;
 
@@ -48,6 +49,7 @@ IN_PROC_BROWSER_TEST_F(BraveMainDelegateBrowserTest, DisableWebSQL) {
 IN_PROC_BROWSER_TEST_F(BraveMainDelegateBrowserTest, DisabledFeatures) {
   const base::Feature* disabled_features[] = {
       &autofill::features::kAutofillServerCommunication,
+      &blink::features::kTextFragmentAnchor,
       &features::kAllowPopupsDuringPageUnload,
       &features::kAudioServiceOutOfProcess,
       &features::kNotificationTriggers,
