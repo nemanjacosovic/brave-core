@@ -6,6 +6,7 @@
 #include "brave/browser/search_engines/search_engine_provider_service_factory.h"
 
 #include "brave/browser/profiles/profile_util.h"
+#include "brave/browser/search_engines/default_search_engine_provider_service.h"
 #include "brave/browser/search_engines/guest_window_search_engine_provider_service.h"
 #include "brave/browser/search_engines/private_window_search_engine_provider_service.h"
 #include "brave/browser/search_engines/search_engine_provider_util.h"
@@ -47,7 +48,7 @@ KeyedService* InitializeSearchEngineProviderServiceIfNeeded(Profile* profile) {
     return new PrivateWindowSearchEngineProviderService(profile);
   }
 
-  return nullptr;
+  return new DefaultSearchEngineProviderService(profile);
 }
 
 }  // namespace
