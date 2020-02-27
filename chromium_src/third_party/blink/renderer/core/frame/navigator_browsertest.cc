@@ -55,13 +55,4 @@ IN_PROC_BROWSER_TEST_F(NavigatorGetBraveDetectedTest, IsDetected) {
       contents, "getBraveDetected()"));
 }
 
-IN_PROC_BROWSER_TEST_F(NavigatorGetBraveDetectedTest, OtherFieldsSet) {
-  GURL url = embedded_test_server()->GetURL(kDetectBraveTest);
-  ui_test_utils::NavigateToURL(browser(), url);
-  content::WebContents* contents =
-      browser()->tab_strip_model()->GetActiveWebContents();
-  EXPECT_EQ(false, EvalJs(
-      contents, "otherFieldsSet()"));
-}
-
 }

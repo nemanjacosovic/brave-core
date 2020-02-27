@@ -1,0 +1,13 @@
+diff --git a/third_party/blink/renderer/core/frame/navigator.h b/third_party/blink/renderer/core/frame/navigator.h
+index 4572df017cf40ca2f2b8b746ca1aeea3021a277c..58c0d788acf941ce5cfe05e65e4021fded035af5 100644
+--- a/third_party/blink/renderer/core/frame/navigator.h
++++ b/third_party/blink/renderer/core/frame/navigator.h
+@@ -70,7 +70,7 @@ class CORE_EXPORT Navigator final : public ScriptWrappable,
+   void SetUserAgentMetadataForTesting(UserAgentMetadata);
+ 
+   void Trace(blink::Visitor*) override;
+-
++  BRAVE_IS_BRAVE
+  private:
+   UserAgentMetadata metadata_;
+ };
