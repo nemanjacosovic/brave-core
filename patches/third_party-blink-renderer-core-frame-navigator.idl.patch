@@ -1,12 +1,12 @@
 diff --git a/third_party/blink/renderer/core/frame/navigator.idl b/third_party/blink/renderer/core/frame/navigator.idl
-index f13febb148e985aa5401ca6ae3221fce45a97261..8f5a73cd3aec3079c464b89e8c491059a99a4345 100644
+index f13febb148e985aa5401ca6ae3221fce45a97261..9c4c7c492de48dc237accdc62ff8dd8c29bbfb56 100644
 --- a/third_party/blink/renderer/core/frame/navigator.idl
 +++ b/third_party/blink/renderer/core/frame/navigator.idl
 @@ -32,11 +32,12 @@
      [HighEntropy, MeasureAs=NavigatorProductSub] readonly attribute DOMString productSub;
      // https://www.w3.org/Bugs/Public/show_bug.cgi?id=27786
      [HighEntropy, MeasureAs=NavigatorVendor] readonly attribute DOMString vendor;
-+    [CallWith=ScriptState] Promise<boolean> isBrave();
++    readonly attribute NavigatorBrave brave;
  };
  
  Navigator includes NavigatorConcurrentHardware;

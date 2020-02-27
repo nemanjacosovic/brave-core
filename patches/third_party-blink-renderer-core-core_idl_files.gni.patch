@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/core_idl_files.gni b/third_party/blink/renderer/core/core_idl_files.gni
+index cbefd9c9bda5dc56ec967616a8182529066c8d2e..af3f7521bffb76498621092e3757da9a65e4070b 100644
+--- a/third_party/blink/renderer/core/core_idl_files.gni
++++ b/third_party/blink/renderer/core/core_idl_files.gni
+@@ -193,6 +193,7 @@ core_idl_files =
+                     "frame/history.idl",
+                     "frame/intervention_report_body.idl",
+                     "frame/location.idl",
++                    "../../../../brave/third_party/blink/renderer/core/frame/navigator_brave.idl",
+                     "frame/report.idl",
+                     "frame/report_body.idl",
+                     "frame/reporting_observer.idl",

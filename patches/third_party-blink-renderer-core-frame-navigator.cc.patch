@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/frame/navigator.cc b/third_party/blink/renderer/core/frame/navigator.cc
+index 6d0c3d3961d6ef56f9780eea101d64f36fde0637..906a10149fd2ddb1c72e5692742682522eb26ebe 100644
+--- a/third_party/blink/renderer/core/frame/navigator.cc
++++ b/third_party/blink/renderer/core/frame/navigator.cc
+@@ -113,6 +113,7 @@ void Navigator::Trace(blink::Visitor* visitor) {
+   NavigatorLanguage::Trace(visitor);
+   DOMWindowClient::Trace(visitor);
+   Supplementable<Navigator>::Trace(visitor);
++  visitor->Trace(brave_);
+ }
+ 
+ }  // namespace blink

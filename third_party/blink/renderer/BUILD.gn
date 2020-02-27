@@ -7,5 +7,9 @@ source_set("renderer") {
   deps = [
     "//brave/components/brave_drm:brave_drm_blink",
   ]
-}
 
+  sources = [
+    "//brave/third_party/blink/renderer/core/frame/navigator_brave.cc",
+    "//brave/third_party/blink/renderer/core/frame/navigator_brave.h"
+  ]
+}

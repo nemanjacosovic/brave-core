@@ -3,13 +3,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this file,
  * You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-#include "navigator.h"
+#include "navigator_brave.h"
 
-#include "../../../../../../../third_party/blink/renderer/core/frame/navigator.cc"
+#include "third_party/blink/renderer/bindings/core/v8/script_promise.h"
+#include "third_party/blink/renderer/bindings/core/v8/script_promise_resolver.h"
 
 namespace blink {
 
-ScriptPromise Navigator::isBrave(ScriptState* script_state) {
+ScriptPromise NavigatorBrave::isBrave(ScriptState* script_state) {
   auto* resolver = MakeGarbageCollected<ScriptPromiseResolver>(script_state);
   ScriptPromise promise = resolver->Promise();
   resolver->Resolve(true);
