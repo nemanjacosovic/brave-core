@@ -30,7 +30,7 @@ NTPSponsoredImagesData::NTPSponsoredImagesData(
 NTPSponsoredImagesData::~NTPSponsoredImagesData() = default;
 
 bool NTPSponsoredImagesData::IsValid() const {
-  return (wallpaper_image_files.size() > 0 && !logo_destination_url.empty());
+  return (backgrounds.size() > 0 && !logo_destination_url.empty());
 }
 
 std::string NTPSponsoredImagesData::logo_image_url() const {
@@ -39,7 +39,7 @@ std::string NTPSponsoredImagesData::logo_image_url() const {
 
 std::vector<std::string> NTPSponsoredImagesData::wallpaper_image_urls() const {
   std::vector<std::string> wallpaper_image_urls;
-  for (size_t i = 0; i < wallpaper_image_files.size(); i++) {
+  for (size_t i = 0; i <backgrounds.size(); i++) {
     const std::string wallpaper_image_url = url_prefix + base::StringPrintf(
         "%s%zu.jpg", kWallpaperPathPrefix, i);
     wallpaper_image_urls.push_back(wallpaper_image_url);

@@ -36,6 +36,8 @@ constexpr char kLogoCompanyNamePath[] = "logo.companyName";
 constexpr char kLogoDestinationURLPath[] = "logo.destinationUrl";
 constexpr char kWallpapersPath[] = "wallpapers";
 constexpr char kWallpaperImageURLPath[] = "imageUrl";
+constexpr char kWallpaperFocalPointXPath[] = "focalPoint.x";
+constexpr char kWallpaperFocalPointYPath[] = "focalPoint.y";
 constexpr char kSchemaVersionPath[] = "schemaVersion";
 
 constexpr int kExpectedSchemaVersion = 1;
@@ -165,12 +167,15 @@ void NTPSponsoredImagesService::OnGetPhotoJsonData(
       images_data_->logo_destination_url = *logo_destination_url;
     }
 
-    if (auto* wallpaper_image_urls =
+    if (auto* wallpapers =
             photo_value->FindListPath(kWallpapersPath)) {
-      for (const auto& value : wallpaper_image_urls->GetList()) {
-        images_data_->wallpaper_image_files.push_back(
+      for (const auto& wallpaper : wallpapers->GetList()) {
+        images_data_->backgrounds.push_back({
             base_dir.AppendASCII(
-                *value.FindStringPath(kWallpaperImageURLPath)));
+                *wallpaper.FindStringPath(kWallpaperImageURLPath)),
+            { wallpaper.FindIntPath(kWallpaperFocalPointXPath).value_or(0),
+              wallpaper.FindIntPath(kWallpaperFocalPointYPath).value_or(0) }
+        });
       }
     }
     NotifyObservers();

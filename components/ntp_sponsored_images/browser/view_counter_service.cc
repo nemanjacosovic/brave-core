@@ -28,10 +28,10 @@ namespace {
 NTPSponsoredImagesData* GetDemoWallpaper() {
   static auto demo = std::make_unique<NTPSponsoredImagesData>();
   demo->url_prefix = "chrome://newtab/ntp-dummy-brandedwallpaper/";
-  demo->wallpaper_image_files = {
-      base::FilePath(FILE_PATH_LITERAL("wallpaper1.jpg")),
-      base::FilePath(FILE_PATH_LITERAL("wallpaper2.jpg")),
-      base::FilePath(FILE_PATH_LITERAL("wallpaper3.jpg")),
+  demo->backgrounds = {
+      { base::FilePath(FILE_PATH_LITERAL("wallpaper1.jpg")), {3988, 2049} },
+      { base::FilePath(FILE_PATH_LITERAL("wallpaper2.jpg")), {5233, 3464} },
+      { base::FilePath(FILE_PATH_LITERAL("wallpaper3.jpg")), {0, 0} },
   };
   demo->logo_alt_text = "Technikke: For music lovers.";
   demo->logo_company_name = "Technikke";
@@ -65,8 +65,7 @@ ViewCounterService::ViewCounterService(
   }
 
   if (current_wallpaper()) {
-    model_.set_total_image_count(
-        current_wallpaper()->wallpaper_image_files.size());
+    model_.set_total_image_count(current_wallpaper()->backgrounds.size());
   }
 
   pref_change_registrar_.Init(prefs_);
@@ -101,7 +100,7 @@ void ViewCounterService::OnUpdated(
   // Data is updated, so change our stored data and reset any indexes.
   // But keep view counter until branded content is seen.
   model_.ResetCurrentWallpaperImageIndex();
-  model_.set_total_image_count(data ? data->wallpaper_image_files.size() : 0);
+  model_.set_total_image_count(data ? data->backgrounds.size() : 0);
 }
 
 

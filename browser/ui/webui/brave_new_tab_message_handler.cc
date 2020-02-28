@@ -52,6 +52,12 @@ base::DictionaryValue GetBrandedWallpaperDictionary(
   base::DictionaryValue data;
   data.SetString("wallpaperImageUrl",
       wallpaper->wallpaper_image_urls()[wallpaper_image_index]);
+  auto focal_point = std::make_unique<base::DictionaryValue>();
+  focal_point->SetInteger(
+      "x", wallpaper->backgrounds[wallpaper_image_index].focal_point.x());
+  focal_point->SetInteger(
+      "y", wallpaper->backgrounds[wallpaper_image_index].focal_point.y());
+  data.SetDictionary("focalPoint", std::move(focal_point));
   auto logo_data = std::make_unique<base::DictionaryValue>();
   logo_data->SetString("image", wallpaper->logo_image_url());
   logo_data->SetString("companyName", wallpaper->logo_company_name);

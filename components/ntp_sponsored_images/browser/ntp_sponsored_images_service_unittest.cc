@@ -69,11 +69,11 @@ TEST(NTPSponsoredImagesServiceTest, InternalDataTest) {
           "wallpapers": [
               {
                 "imageUrl": "background-1.jpg",
-                "focalPoint": {}
+                "focalPoint": { "x": 696, "y": 691 }
               },
               {
                 "imageUrl": "background-2.jpg",
-                "focalPoint": {}
+                "focalPoint": { "x": 1295, "y": 872 }
               },
               {
                 "imageUrl": "background-3.jpg",
@@ -88,7 +88,9 @@ TEST(NTPSponsoredImagesServiceTest, InternalDataTest) {
   EXPECT_TRUE(data->IsValid());
   // Above json data has 3 wallpapers.
   const size_t image_count = 3;
-  EXPECT_EQ(image_count, data->wallpaper_image_urls().size());
+  EXPECT_EQ(image_count, data->backgrounds.size());
+  EXPECT_EQ(696, data->backgrounds[0].focal_point.x());
+  EXPECT_EQ(0, data->backgrounds[2].focal_point.x());
   observer.called_ = false;
   service.NotifyObservers();
   EXPECT_TRUE(observer.called_);

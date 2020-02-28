@@ -10,8 +10,14 @@
 #include <vector>
 
 #include "base/files/file_path.h"
+#include "ui/gfx/geometry/point.h"
 
 namespace ntp_sponsored_images {
+
+struct Background {
+  base::FilePath image_file;
+  gfx::Point focal_point;
+};
 
 struct NTPSponsoredImagesData {
   NTPSponsoredImagesData();
@@ -28,7 +34,7 @@ struct NTPSponsoredImagesData {
   std::string logo_alt_text;
   std::string logo_destination_url;
   std::string logo_company_name;
-  std::vector<base::FilePath> wallpaper_image_files;
+  std::vector<Background> backgrounds;
   std::string url_prefix;
 };
 
