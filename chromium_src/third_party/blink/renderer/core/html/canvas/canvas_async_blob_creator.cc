@@ -13,9 +13,9 @@
 #include "third_party/blink/renderer/platform/heap/handle.h"
 #include "third_party/blink/renderer/platform/supplementable.h"
 
-#define BRAVE_TODATAURL_INTERNAL                                               \
-  base::StringPiece host =                                                     \
-      base::StringPiece(GetExecutionContextUrl().Host().Utf8());               \
+#define BRAVE_ENCODEIMAGE                                                      \
+  base::StringPiece host = base::StringPiece(                                  \
+      To<Document>(*context_).TopFrameOrigin()->ToUrlOrigin().host());         \
   std::string domain = net::registry_controlled_domains::GetDomainAndRegistry( \
       host, net::registry_controlled_domains::INCLUDE_PRIVATE_REGISTRIES);     \
   crypto::HMAC h(crypto::HMAC::SHA256);                                        \
@@ -29,9 +29,9 @@
   CHECK(h.Sign(domain, domainkey, sizeof domainkey));                          \
   const uint8_t* byte = reinterpret_cast<const uint8_t*>(&domainkey);          \
   uint8_t channel = *byte % 3;                                                 \
-  unsigned char* pixels = const_cast<unsigned char*>(data_buffer->Pixels());   \
+  unsigned char* pixels = const_cast<unsigned char*>(buffer->Pixels());        \
   uint64_t v = *reinterpret_cast<uint64_t*>(&domainkey);                       \
-  const uint64_t pixel_size = data_buffer->Width() * data_buffer->Height();    \
+  const uint64_t pixel_size = buffer->Width() * buffer->Height();              \
   const uint64_t zero = 0;                                                     \
   uint64_t pixel_index;                                                        \
   for (int i = 0; i < 32; i++) {                                               \
@@ -44,6 +44,6 @@
     }                                                                          \
   }
 
-#include "../../../../../../../third_party/blink/renderer/core/html/canvas/html_canvas_element.cc"
+#include "../../../../../../../third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc"
 
-#undef BRAVE_TODATAURL_INTERNAL
+#undef BRAVE_ENCODEIMAGE

@@ -1,0 +1,12 @@
+diff --git a/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc b/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc
+index 3d8b51d9113ac70a8afc26c7339e73534b526a2c..de10daee549cd191e7a4d10618e1f3db0e16fe64 100644
+--- a/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc
++++ b/third_party/blink/renderer/core/html/canvas/canvas_async_blob_creator.cc
+@@ -294,6 +294,7 @@ bool CanvasAsyncBlobCreator::EncodeImage(const double& quality) {
+   std::unique_ptr<ImageDataBuffer> buffer = ImageDataBuffer::Create(src_data_);
+   if (!buffer)
+     return false;
++  BRAVE_ENCODEIMAGE
+   return buffer->EncodeImage(mime_type_, quality, &encoded_image_);
+ }
+ 
