@@ -1,0 +1,36 @@
+diff --git a/chrome/android/java/src/org/chromium/chrome/browser/settings/privacy/ClearBrowsingDataPreferences.java b/chrome/android/java/src/org/chromium/chrome/browser/settings/privacy/ClearBrowsingDataPreferences.java
+index aa86c648c6a067b09774afd718377ad1dd988857..2cf5506eac73ce815b500219353a2bc0f42b98c6 100644
+--- a/chrome/android/java/src/org/chromium/chrome/browser/settings/privacy/ClearBrowsingDataPreferences.java
++++ b/chrome/android/java/src/org/chromium/chrome/browser/settings/privacy/ClearBrowsingDataPreferences.java
+@@ -231,6 +231,7 @@ public abstract class ClearBrowsingDataPreferences extends PreferenceFragmentCom
+         for (@DialogOption int i = DialogOption.CLEAR_HISTORY; i < DialogOption.NUM_ENTRIES; i++) {
+             all.add(i);
+         }
++        all.addAll(BraveClearBrowsingDataPreferencesAdvanced.getBraveOptions());
+         return all;
+     }
+ 
+@@ -249,6 +250,7 @@ public abstract class ClearBrowsingDataPreferences extends PreferenceFragmentCom
+             case DialogOption.CLEAR_SITE_SETTINGS:
+                 return BrowsingDataType.SITE_SETTINGS;
+             default:
++                if (BraveClearBrowsingDataPreferencesAdvanced.isValidDataType(type)) return BraveClearBrowsingDataPreferencesAdvanced.getDataType(type);
+                 throw new IllegalArgumentException();
+         }
+     }
+@@ -268,6 +270,7 @@ public abstract class ClearBrowsingDataPreferences extends PreferenceFragmentCom
+             case DialogOption.CLEAR_SITE_SETTINGS:
+                 return "clear_site_settings_checkbox";
+             default:
++                if (BraveClearBrowsingDataPreferencesAdvanced.isValidDataType(type)) return BraveClearBrowsingDataPreferencesAdvanced.getPreferenceKey(type);
+                 throw new IllegalArgumentException();
+         }
+     }
+@@ -287,6 +290,7 @@ public abstract class ClearBrowsingDataPreferences extends PreferenceFragmentCom
+             case DialogOption.CLEAR_SITE_SETTINGS:
+                 return R.drawable.ic_tv_options_input_settings_rotated_grey;
+             default:
++                if (BraveClearBrowsingDataPreferencesAdvanced.isValidDataType(type)) return BraveClearBrowsingDataPreferencesAdvanced.getIcon(type);
+                 throw new IllegalArgumentException();
+         }
+     }
