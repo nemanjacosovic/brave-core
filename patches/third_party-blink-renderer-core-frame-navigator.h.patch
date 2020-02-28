@@ -1,5 +1,5 @@
 diff --git a/third_party/blink/renderer/core/frame/navigator.h b/third_party/blink/renderer/core/frame/navigator.h
-index 4572df017cf40ca2f2b8b746ca1aeea3021a277c..dac7921e04e0a1984f6c3bd32cb4aa3703bf293b 100644
+index 4572df017cf40ca2f2b8b746ca1aeea3021a277c..f0a92768ffa13b9b4c7a9ec209ab9640cef26a7a 100644
 --- a/third_party/blink/renderer/core/frame/navigator.h
 +++ b/third_party/blink/renderer/core/frame/navigator.h
 @@ -33,6 +33,7 @@
@@ -10,14 +10,11 @@ index 4572df017cf40ca2f2b8b746ca1aeea3021a277c..dac7921e04e0a1984f6c3bd32cb4aa37
  
  namespace blink {
  
-@@ -70,8 +71,9 @@ class CORE_EXPORT Navigator final : public ScriptWrappable,
-   void SetUserAgentMetadataForTesting(UserAgentMetadata);
+@@ -71,6 +72,7 @@ class CORE_EXPORT Navigator final : public ScriptWrappable,
  
    void Trace(blink::Visitor*) override;
--
-+  NavigatorBrave* brave() { if (!brave_) { brave_ = MakeGarbageCollected<NavigatorBrave>(); } return brave_; }
+ 
++  BRAVE_NAVIGATOR_OVERRIDES
   private:
-+  Member<NavigatorBrave> brave_;
    UserAgentMetadata metadata_;
  };
- 

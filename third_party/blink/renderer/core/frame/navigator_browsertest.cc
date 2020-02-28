@@ -21,10 +21,6 @@ class NavigatorGetBraveDetectedTest : public InProcessBrowserTest {
   void SetUpOnMainThread() override {
     InProcessBrowserTest::SetUpOnMainThread();
 
-    content_client_.reset(new ChromeContentClient);
-    content::SetContentClient(content_client_.get());
-    browser_content_client_.reset(new BraveContentBrowserClient());
-    content::SetBrowserClientForTesting(browser_content_client_.get());
     content::SetupCrossSiteRedirector(embedded_test_server());
 
     brave::RegisterPathProvider();
@@ -34,16 +30,6 @@ class NavigatorGetBraveDetectedTest : public InProcessBrowserTest {
 
     ASSERT_TRUE(embedded_test_server()->Start());
   }
-
-  void TearDown() override {
-    browser_content_client_.reset();
-    content_client_.reset();
-  }
-
- private:
-  std::unique_ptr<ChromeContentClient> content_client_;
-  std::unique_ptr<BraveContentBrowserClient> browser_content_client_;
-  base::ScopedTempDir temp_user_data_dir_;
 };
 
 IN_PROC_BROWSER_TEST_F(NavigatorGetBraveDetectedTest, IsDetected) {
