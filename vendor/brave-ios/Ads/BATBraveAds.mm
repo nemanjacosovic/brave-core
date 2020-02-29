@@ -366,9 +366,9 @@ BATClassAdsBridge(BOOL, isTesting, setTesting, _is_testing)
                          ads::AdContent::LikeAction::kThumbsDown);
 }
 
-- (void)confirmAdNotification:(std::unique_ptr<ads::AdNotificationInfo>)info
+- (void)confirmAd:(const ads::AdInfo &)info confirmationType:(const ads::ConfirmationType)confirmationType
 {
-  [self.ledger confirmAdNotification:[NSString stringWithUTF8String:info->ToJson().c_str()]];
+  [self.ledger confirmAd:[NSString stringWithUTF8String:info.ToJson().c_str()] confirmationType:confirmationType];
 }
 
 - (void)confirmAction:(const std::string &)creative_instance_id creativeSetId:(const std::string &)creative_set_id confirmationType:(const ads::ConfirmationType &)type

@@ -476,9 +476,10 @@ void BatLedgerImpl::SetCatalogIssuers(const std::string& info) {
   ledger_->SetCatalogIssuers(info);
 }
 
-void BatLedgerImpl::ConfirmAdNotification(
-    const std::string& json) {
-  ledger_->ConfirmAdNotification(json);
+void BatLedgerImpl::ConfirmAd(
+    const std::string& json,
+    const std::string& confirmation_type) {
+  ledger_->ConfirmAd(json, confirmation_type);
 }
 
 void BatLedgerImpl::ConfirmAction(
